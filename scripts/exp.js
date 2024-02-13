@@ -31,7 +31,7 @@ let trials = {
     },
     timeline: [
         {  //空屏
-            stimulus: jsPsych.timelineVariable('content'),
+            stimulus:" ",
             choices: 'NO_KEYS',
             trial_duration: 1000
         },
