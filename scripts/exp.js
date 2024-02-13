@@ -16,11 +16,11 @@ let instruction = {
     `,
     post_trial_gap: 500,
     css_classes: "experiment-instruction"
-} //定义实验用的div，方便操控所有CSS
+} 
 
-let trials = {
+let parity_trials = {
     type: jsPsychHtmlKeyboardResponse,
-    css_classes: "experiment-content",
+    css_classes: "experiment-content-parity",
     save_trial_parameters: {
         trial_duration: true,
         choices: true,
@@ -48,10 +48,61 @@ let trials = {
             stimulus: jsPsych.timelineVariable('content'),
             choices: ["f", "j"],
             trial_duration: 150
-        },
+        }
+    ],
+    timeline_variables: [
+        { content: "1", category: 1 },
+        { content: "2", category: 2 },
+        { content: "3", category: 1 },
+        { content: "4", category: 2 },
+        { content: "5", category: 1 },
+        { content: "6", category: 2 }
+    ],
+    sample: {
+        type: 'fixed-repetitions',
+        size: 2
+    },
+    on_finish: function (data) {
+        //赋予正确答案值
+        if (data.category === 1) {
+            data.correct = (data.response === 'f');
+        }
+        else {
+            data.correct = (data.response === 'j');
+        }
+    }
+}
+
+let rotation_trials = {
+    type: jsPsychHtmlKeyboardResponse,
+    css_classes: "experiment-content-parity",
+    save_trial_parameters: {
+        trial_duration: true,
+        choices: true,
+        post_trial_gap: true
+    },
+    data: {
+        category: jsPsych.timelineVariable('category')
+    },
+    timeline: [
         {  //空屏
+            stimulus:" ",
+            choices: 'NO_KEYS',
+            trial_duration: 1000
+        },
+        { //注视点
+            stimulus: "+",
+            choices: 'NO_KEYS',
+            trial_duration: 500,
+            post_trial_gap: function () {
+                random_interval = 400 + 200 * Math.random();
+                return random_interval;
+            }
+        },
+        {  //刺激
             stimulus: jsPsych.timelineVariable('content'),
-            choices: ["f", "j"]
+            choices: ["f", "j"],
+            trial_duration: 150
         }
     ],
     timeline_variables: [
@@ -87,6 +138,6 @@ let ending = {
 }
 
 jsPsych.run([
-    instruction, trials, ending
+    instruction, parity_trials, ending
 ])
 

@@ -21,13 +21,25 @@ body {
 }
 
 /*定义实验材料样式*/
-.experiment-content {
+.experiment-content-parity {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
     font-size: 600%;
     font-family: Arial;
+    /*display: flex;*/
+}
+
+.experiment-content-rotation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 600%;
+    font-family: Arial;
+    border-style: solid;
+
     /*display: flex;*/
 }
 
