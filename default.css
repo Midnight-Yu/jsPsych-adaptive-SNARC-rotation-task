@@ -1,0 +1,38 @@
+/*定义所有文字颜色为白色*/
+* {
+    color:white; 
+}
+
+/*定义背景颜色为黑，隐藏鼠标*/
+body {
+    background-color: black;
+    cursor: none;
+}
+
+/*定义实验指导语样式*/
+.experiment-instruction {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 300%;
+    font-family: Arial;
+    /*display: flex;*/
+}
+
+/*定义实验材料样式*/
+.experiment-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 600%;
+    font-family: Arial;
+    /*display: flex;*/
+}
+
+/*定义p元素居中对齐*/
+p {
+    text-align: center;
+    vertical-align:auto;
+}
