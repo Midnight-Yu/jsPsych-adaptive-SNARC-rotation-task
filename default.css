@@ -21,7 +21,7 @@ body {
 }
 
 /*定义实验材料样式*/
-.experiment-content-parity {
+.experiment-content{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -39,7 +39,10 @@ body {
     font-size: 600%;
     font-family: Arial;
     border-style: solid;
-
+    height: 200px;
+    width: 200px;
+    vertical-align: middle;
+    text-align: center;
     /*display: flex;*/
 }
 

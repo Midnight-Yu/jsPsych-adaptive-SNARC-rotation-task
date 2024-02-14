@@ -20,7 +20,7 @@ let instruction = {
 
 let parity_trials = {
     type: jsPsychHtmlKeyboardResponse,
-    css_classes: "experiment-content-parity",
+    css_classes: "experiment-content",
     save_trial_parameters: {
         trial_duration: true,
         choices: true,
@@ -47,7 +47,7 @@ let parity_trials = {
         {  //刺激
             stimulus: jsPsych.timelineVariable('content'),
             choices: ["f", "j"],
-            trial_duration: 150
+            stimulus_duration: 150
         }
     ],
     timeline_variables: [
@@ -75,7 +75,7 @@ let parity_trials = {
 
 let rotation_trials = {
     type: jsPsychHtmlKeyboardResponse,
-    css_classes: "experiment-content-parity",
+    css_classes: "experiment-content",
     save_trial_parameters: {
         trial_duration: true,
         choices: true,
@@ -102,7 +102,8 @@ let rotation_trials = {
         {  //刺激
             stimulus: jsPsych.timelineVariable('content'),
             choices: ["f", "j"],
-            trial_duration: 150
+            stimulus_duration: 150,
+            css_classes: "experiment-content-rotation"
         }
     ],
     timeline_variables: [
@@ -138,6 +139,6 @@ let ending = {
 }
 
 jsPsych.run([
-    instruction, parity_trials, ending
+    instruction, /*parity_trials,*/ rotation_trials, ending
 ])
 
