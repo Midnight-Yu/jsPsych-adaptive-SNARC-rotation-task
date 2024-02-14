@@ -103,7 +103,6 @@ let rotation_trials = {
             stimulus: jsPsych.timelineVariable('content'),
             choices: ["f", "j"],
             stimulus_duration: 150,
-            css_classes: "experiment-content-rotation"
         }
     ],
     timeline_variables: [
