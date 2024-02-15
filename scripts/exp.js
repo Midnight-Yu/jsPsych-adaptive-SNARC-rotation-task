@@ -1,3 +1,36 @@
+//列表生成
+const originalList = [
+    { content: "1", category: 1 },
+    { content: "2", category: 2 },
+    { content: "3", category: 1 },
+    { content: "4", category: 2 },
+    { content: "5", category: 1 },
+    { content: "6", category: 2 }
+];
+
+const rotationValues = ["5deg", "7deg", "9deg", "11deg", "13deg"];
+
+const orientationMark = ["+", "-"]
+
+const rotationList = [];
+
+const resultList = [];
+
+originalList.forEach(item => {
+    rotationValues.forEach(rotation => {
+        rotationList.push({ ...item, rotation });
+    });
+});
+
+rotationList.forEach(item => {
+    orientationMark.forEach(orientation => {
+        resultList.push({ ...item, orientation });
+    });
+});
+
+console.log(resultList);
+
+
 let jsPsych = initJsPsych({
     on_finish: function () {
         jsPsych.data
@@ -60,7 +93,7 @@ let parity_trials = {
     ],
     sample: {
         type: 'fixed-repetitions',
-        size: 2
+        size: 20
     },
     on_finish: function (data) {
         //赋予正确答案值
@@ -100,22 +133,15 @@ let rotation_trials = {
             }
         },
         {  //刺激
-            stimulus: () => "<div class='experiment-content-rotation'>"+jsPsych.timelineVariable('content')+"</div>",
+            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>"+jsPsych.timelineVariable('content')+"</div>",
             choices: ["f", "j"],
-            stimulus_duration: 150,
+            //stimulus_duration: 150,
         }
     ],
-    timeline_variables: [
-        { content: "1", category: 1 },
-        { content: "2", category: 2 },
-        { content: "3", category: 1 },
-        { content: "4", category: 2 },
-        { content: "5", category: 1 },
-        { content: "6", category: 2 }
-    ],
+    timeline_variables: resultList,
     sample: {
         type: 'fixed-repetitions',
-        size: 2
+        size: 3
     },
     on_finish: function (data) {
         //赋予正确答案值
