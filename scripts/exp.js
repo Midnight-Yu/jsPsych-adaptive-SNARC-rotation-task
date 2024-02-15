@@ -80,7 +80,7 @@ let parity_trials = {
         {  //刺激
             stimulus: jsPsych.timelineVariable('content'),
             choices: ["f", "j"],
-            stimulus_duration: 150
+            //stimulus_duration: 150
         }
     ],
     timeline_variables: [
@@ -136,7 +136,7 @@ let rotation_trials = {
             stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>"+jsPsych.timelineVariable('content')+"</div>",
             //怎么写得这么复杂的
             choices: ["f", "j"],
-            stimulus_duration: 150,
+            //stimulus_duration: 150,
         }
     ],
     timeline_variables: resultList,
