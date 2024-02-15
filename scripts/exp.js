@@ -134,8 +134,9 @@ let rotation_trials = {
         },
         {  //刺激
             stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>"+jsPsych.timelineVariable('content')+"</div>",
+            //怎么写得这么复杂的
             choices: ["f", "j"],
-            //stimulus_duration: 150,
+            stimulus_duration: 150,
         }
     ],
     timeline_variables: resultList,
