@@ -30,6 +30,10 @@ rotationList.forEach(item => {
 
 console.log(resultList);
 
+// 初始化全局参数
+
+let parity_trial_times = 0;
+let rotation_trial_times = 0;
 
 let jsPsych = initJsPsych({
     on_finish: function () {
@@ -49,7 +53,7 @@ let instruction = {
     `,
     post_trial_gap: 500,
     css_classes: "experiment-instruction"
-} 
+}
 
 let parity_trials = {
     type: jsPsychHtmlKeyboardResponse,
@@ -64,7 +68,7 @@ let parity_trials = {
     },
     timeline: [
         {  //空屏
-            stimulus:" ",
+            stimulus: " ",
             choices: 'NO_KEYS',
             trial_duration: 1000
         },
@@ -81,6 +85,30 @@ let parity_trials = {
             stimulus: jsPsych.timelineVariable('content'),
             choices: ["f", "j"],
             //stimulus_duration: 150
+            on_finish: function () {
+                parity_trial_times++
+            }
+        },
+        {  //休息试次
+            timeline: [
+                {
+                    stimulus: `休息试次 30s`,
+                    trial_duration: 30000,
+                    choices: 'NO_KEYS'
+                },
+                {
+                    stimulus: `休息已终止，按空格继续`, 
+                    choices: ' '
+                },
+            ],
+            conditional_function: function () {
+                if (parity_trial_times % 24 === 0) {
+                    return true
+                }
+                else {
+                    return false
+                }
+            },
         }
     ],
     timeline_variables: [
@@ -119,7 +147,7 @@ let rotation_trials = {
     },
     timeline: [
         {  //空屏
-            stimulus:" ",
+            stimulus: " ",
             choices: 'NO_KEYS',
             trial_duration: 1000
         },
@@ -133,10 +161,31 @@ let rotation_trials = {
             }
         },
         {  //刺激
-            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>"+jsPsych.timelineVariable('content')+"</div>",
+            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>" + jsPsych.timelineVariable('content') + "</div>",
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
+        },
+        {  //休息试次
+            timeline: [
+                {
+                    stimulus: `休息试次 30s`,
+                    trial_duration: 30000,
+                    choices: 'NO_KEYS'
+                },
+                {
+                    stimulus: `休息已终止，按空格继续`, 
+                    choices: ' '
+                },
+            ],
+            conditional_function: function () {
+                if (parity_trial_times % 24 === 0) {
+                    return true
+                }
+                else {
+                    return false
+                }
+            },
         }
     ],
     timeline_variables: resultList,
@@ -165,6 +214,6 @@ let ending = {
 }
 
 jsPsych.run([
-    instruction, /*parity_trials,*/ rotation_trials, ending
+    instruction, parity_trials, rotation_trials, ending
 ])
 
