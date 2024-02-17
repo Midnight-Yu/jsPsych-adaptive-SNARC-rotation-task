@@ -39,9 +39,22 @@ let jsPsych = initJsPsych({
     on_finish: function () {
         jsPsych.data
             .get()
-            .localSave('csv', 'data.csv')
+            .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+    },
+    on_close: function () {
+        jsPsych.data
+            .get()
+            .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     }
 }); //初始化jsPsych
+
+// 注册一个listener，用于实验强制退出
+function endExperiment(e) {
+    if (e.key === 'Escape') {
+        jsPsych.endExperiment('实验已终止');
+        document.removeEventListener("keydown", endExperiment);
+    }
+};
 
 let instruction = {
     type: jsPsychHtmlKeyboardResponse,
