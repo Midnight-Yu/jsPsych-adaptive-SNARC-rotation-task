@@ -77,9 +77,7 @@ let parity_trials = {
         post_trial_gap: true
     },
     data: {
-        category: jsPsych.timelineVariable('category'),
-        orientation: jsPsych.timelineVariable('orientation'),
-        rotation: jsPsych.timelineVariable('rotation'),
+        category: jsPsych.timelineVariable('category')
     },
     timeline: [
         {  //空屏
@@ -117,7 +115,7 @@ let parity_trials = {
                 },
             ],
             conditional_function: function () {
-                if (parity_trial_times % 3 === 0) {
+                if (parity_trial_times % 24 === 0) {
                     return true
                 }
                 else {
@@ -136,7 +134,7 @@ let parity_trials = {
     ],
     sample: {
         type: 'fixed-repetitions',
-        size: 2
+        size: 20
     },
     on_start: function () {
         document.addEventListener("keydown", endExperiment)
@@ -161,7 +159,9 @@ let rotation_trials = {
         post_trial_gap: true
     },
     data: {
-        category: jsPsych.timelineVariable('category')
+        category: jsPsych.timelineVariable('category'),
+        orientation: jsPsych.timelineVariable('orientation'),
+        rotation: jsPsych.timelineVariable('rotation'),
     },
     timeline: [
         {  //空屏
