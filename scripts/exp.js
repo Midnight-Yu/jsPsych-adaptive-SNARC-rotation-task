@@ -134,7 +134,10 @@ let parity_trials = {
     ],
     sample: {
         type: 'fixed-repetitions',
-        size: 20
+        size: 1
+    },
+    on_start: function () {
+        document.addEventListener("keydown", endExperiment)
     },
     on_finish: function (data) {
         //赋予正确答案值
