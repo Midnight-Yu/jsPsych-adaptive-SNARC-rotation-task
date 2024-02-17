@@ -231,7 +231,7 @@ let ending = {
     css_classes: "experiment-instruction"
 }
 
-jsPsych.run([
+jsPsych.simulate([
     instruction, parity_trials, rotation_trials, ending
 ])
 
