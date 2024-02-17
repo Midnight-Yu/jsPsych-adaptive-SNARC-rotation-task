@@ -65,7 +65,10 @@ let instruction = {
     <p>如果数字是偶数（双数），请按 J 键</p>
     `,
     post_trial_gap: 500,
-    css_classes: "experiment-instruction"
+    css_classes: "experiment-instruction",
+    on_start: function () {
+        document.addEventListener("keydown", endExperiment)
+    },
 }
 
 let parity_trials = {
@@ -111,7 +114,6 @@ let parity_trials = {
                 },
                 {
                     stimulus: `休息已终止，按空格继续`, 
-                    choices: ' '
                 },
             ],
             conditional_function: function () {
@@ -135,9 +137,6 @@ let parity_trials = {
     sample: {
         type: 'fixed-repetitions',
         size: 20
-    },
-    on_start: function () {
-        document.addEventListener("keydown", endExperiment)
     },
     on_finish: function (data) {
         //赋予正确答案值
@@ -183,6 +182,9 @@ let rotation_trials = {
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
+            on_finish: function( ) {
+                rotation_trial_times++
+            }
         },
         {  //休息试次
             timeline: [
@@ -197,7 +199,7 @@ let rotation_trials = {
                 },
             ],
             conditional_function: function () {
-                if (parity_trial_times % 24 === 0) {
+                if (rotation_trial_times % 24 === 0) {
                     return true
                 }
                 else {
@@ -231,7 +233,7 @@ let ending = {
     css_classes: "experiment-instruction"
 }
 
-jsPsych.simulate([
-    instruction, parity_trials, rotation_trials, ending
+jsPsych.run([
+    instruction, /*parity_trials,*/ rotation_trials, ending
 ])
 
