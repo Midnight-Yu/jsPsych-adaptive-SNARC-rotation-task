@@ -56,6 +56,33 @@ function endExperiment(e) {
     }
 };
 
+let welcome = {
+    type: jsPsychHtmlButtonResponse,
+    css_classes: ['non-experiment'],
+    stimulus: `
+    <p>欢迎参加本次实验！</p>
+    <p>在实验开始前，我们会收集一些用于分析的必要信息</p>
+    <p>点击下方按钮开始</p>
+    `,
+    choices: ['开始实验']
+};
+
+// 数据收集
+let data_collect = {
+    type: jsPsychSurveyHtmlForm,
+    css_classes: ['non-experiment'],
+    html: `
+    <p>您的编号：<input type="text" name="participant_index" style="color:black" placeholder="如不知道，请询问主试"></p>
+    <p>您的性别：<input type="radio" name="gender" value = "1" >男<input type="radio" name="gender" value = "2" >女</p>
+    <p>您的年龄：<input type="text" name="age" style="color:black" placeholder="请输入数字，如23"></p>
+    `,
+    button_label: '提交',
+    dataAsArray: true,
+    on_finish: function (data) {
+        console.log(data.response);
+    }
+};
+
 let instruction = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
