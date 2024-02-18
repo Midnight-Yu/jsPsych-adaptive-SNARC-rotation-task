@@ -32,8 +32,8 @@ console.log(resultList);
 
 // 初始化全局参数
 
-const parity_trial_times = 0;
-const rotation_trial_times = 0;
+let parity_trial_times = 0;
+let rotation_trial_times = 0;
 
 let jsPsych = initJsPsych({
     on_finish: function () {
