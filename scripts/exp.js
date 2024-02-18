@@ -77,7 +77,6 @@ let data_collect = {
     <p>您的年龄：<input type="text" name="age" style="color:black" placeholder="请输入数字，如23"></p>
     `,
     button_label: '提交',
-    dataAsArray: true,
     on_finish: function (data) {
         console.log(data.response);
     }
@@ -261,6 +260,6 @@ let ending = {
 }
 
 jsPsych.run([
-    instruction, /*parity_trials,*/ rotation_trials, ending
+    welcome, data_collect, instruction, /*parity_trials,*/ rotation_trials, ending
 ])
 
