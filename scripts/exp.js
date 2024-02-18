@@ -139,6 +139,9 @@ let parity_trials = {
             //stimulus_duration: 150
             on_finish: function (data) {
                 parity_trial_times++
+
+                data.is_trial = true;
+                data.trial_type = 'parity';
                 //赋予正确答案值
                 if (data.category === 1) {
                     data.correct = (data.response === 'f');
@@ -218,8 +221,10 @@ let rotation_trials = {
             //stimulus_duration: 150,
             on_finish: function (data) {
                 rotation_trial_times++
+                
+                data.is_trial = true;
+                data.trial_type = 'rotation';
                 //赋予正确答案值
-                console.log(data.orientation)
                 if (data.orientation === '-') {
                     data.correct = (data.response === 'f');
                 }
