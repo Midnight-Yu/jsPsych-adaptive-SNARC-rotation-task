@@ -35,15 +35,21 @@ console.log(resultList);
 let parity_trial_times = 0;
 let rotation_trial_times = 0;
 
+var participant_index;
+var gender;
+var age;
+
 let jsPsych = initJsPsych({
     on_finish: function () {
         jsPsych.data
             .get()
+            .addToAll({ subject_index: participant_index, gender: gender, age: age })
             .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     },
     on_close: function () {
         jsPsych.data
             .get()
+            .addToAll({ subject_index: participant_index, gender: gender, age: age })
             .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     }
 }); //初始化jsPsych
@@ -79,6 +85,10 @@ let data_collect = {
     button_label: '提交',
     on_finish: function (data) {
         console.log(data.response);
+
+        participant_index = data.response.participant_index;
+        gender = data.response.gender;
+        age = data.response.age;
     }
 };
 
@@ -127,8 +137,15 @@ let parity_trials = {
             stimulus: jsPsych.timelineVariable('content'),
             choices: ["f", "j"],
             //stimulus_duration: 150
-            on_finish: function () {
+            on_finish: function (data) {
                 parity_trial_times++
+                //赋予正确答案值
+                if (data.category === 1) {
+                    data.correct = (data.response === 'f');
+                }
+                else {
+                    data.correct = (data.response === 'j');
+                }
             }
         },
         {  //休息试次
@@ -139,7 +156,7 @@ let parity_trials = {
                     choices: 'NO_KEYS'
                 },
                 {
-                    stimulus: `休息已终止，按空格继续`, 
+                    stimulus: `休息已终止，按空格继续`,
                 },
             ],
             conditional_function: function () {
@@ -164,15 +181,6 @@ let parity_trials = {
         type: 'fixed-repetitions',
         size: 20
     },
-    on_finish: function (data) {
-        //赋予正确答案值
-        if (data.category === 1) {
-            data.correct = (data.response === 'f');
-        }
-        else {
-            data.correct = (data.response === 'j');
-        }
-    }
 }
 
 let rotation_trials = {
@@ -208,8 +216,15 @@ let rotation_trials = {
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
-            on_finish: function( ) {
+            on_finish: function () {
                 rotation_trial_times++
+                //赋予正确答案值
+                if (data.orientation === '+') {
+                    data.correct = (data.response === 'f');
+                }
+                else {
+                    data.correct = (data.response === 'j');
+                }
             }
         },
         {  //休息试次
@@ -220,7 +235,7 @@ let rotation_trials = {
                     choices: 'NO_KEYS'
                 },
                 {
-                    stimulus: `休息已终止，按空格继续`, 
+                    stimulus: `休息已终止，按空格继续`,
                     choices: ' '
                 },
             ],
@@ -239,15 +254,6 @@ let rotation_trials = {
         type: 'fixed-repetitions',
         size: 3
     },
-    on_finish: function (data) {
-        //赋予正确答案值
-        if (data.orientation === '+') {
-            data.correct = (data.response === 'f');
-        }
-        else {
-            data.correct = (data.response === 'j');
-        }
-    }
 }
 
 let ending = {
