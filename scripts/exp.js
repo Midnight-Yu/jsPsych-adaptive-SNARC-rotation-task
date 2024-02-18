@@ -267,6 +267,6 @@ let ending = {
 }
 
 jsPsych.run([
-    welcome, data_collect, instruction, /*parity_trials,*/ rotation_trials, ending
+    welcome, data_collect, instruction, parity_trials, rotation_trials, ending
 ])
 
