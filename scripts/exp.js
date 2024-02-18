@@ -216,10 +216,11 @@ let rotation_trials = {
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
-            on_finish: function () {
+            on_finish: function (data) {
                 rotation_trial_times++
                 //赋予正确答案值
-                if (data.orientation === '+') {
+                console.log(data.orientation)
+                if (data.orientation === '-') {
                     data.correct = (data.response === 'f');
                 }
                 else {
