@@ -1,11 +1,11 @@
 //列表生成
 const originalList = [
-    { content: "1", category: 1 },
-    { content: "2", category: 2 },
-    { content: "3", category: 1 },
-    { content: "4", category: 2 },
-    { content: "5", category: 1 },
-    { content: "6", category: 2 }
+    { content: "1", parity: 1 },
+    { content: "2", parity: 2 },
+    { content: "3", parity: 1 },
+    { content: "4", parity: 2 },
+    { content: "5", parity: 1 },
+    { content: "6", parity: 2 }
 ];
 
 const rotationValues = ["5deg", "7deg", "9deg", "11deg", "13deg"];
@@ -116,7 +116,7 @@ let parity_trials = {
         post_trial_gap: true
     },
     data: {
-        category: jsPsych.timelineVariable('category')
+        parity: jsPsych.timelineVariable('parity')
     },
     timeline: [
         {  //空屏
@@ -173,16 +173,53 @@ let parity_trials = {
         }
     ],
     timeline_variables: [
-        { content: "1", category: 1 },
-        { content: "2", category: 2 },
-        { content: "3", category: 1 },
-        { content: "4", category: 2 },
-        { content: "5", category: 1 },
-        { content: "6", category: 2 }
+        { content: "1", parity: 1 },
+        { content: "2", parity: 2 },
+        { content: "3", parity: 1 },
+        { content: "4", parity: 2 },
+        { content: "5", parity: 1 },
+        { content: "6", parity: 2 }
     ],
     sample: {
-        type: 'fixed-repetitions',
-        size: 20
+        type: 'custom',
+        fn: function (t) { // 抄书上的
+            let new_t = t.concat(t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t); //把目标数组复制二十份，拼到一起
+
+            let loop_state = true; // 初始化循环状态
+
+            while (loop_state) {
+                loop_state = false;
+
+                for (let i = 0; i < new_t.length; i++) {
+                    let rand_index = Math.floor(Math.random() * (new_t.length - i) + i); // 这个随机怎么搞的？？？我没看懂啊？？？
+                    [new_t[i], new_t[rand_index]] = [new_t[rand_index], new_t[i]]; // 交换索引
+                }
+
+                let repeat = 1;
+
+                for (let i = 1; i < new_t.length; i++) {
+                    console.log([new_t[i], new_t[i - 1]])
+                    console.log([parity_trials.timeline_variables[new_t[i]].parity, parity_trials.timeline_variables[new_t[i - 1]].parity])
+
+                    let parity = parity_trials.timeline_variables[new_t[i]].parity;
+                    let last_parity = parity_trials.timeline_variables[new_t[i - 1]].parity;
+
+                    if (parity === last_parity) {
+                        repeat++;
+                    }
+                    else {
+                        repeat = 1;
+                    }
+
+                    if (repeat >= 4) {
+                        loop_state = true;
+                        break;
+                    }
+                }
+            }
+
+            return new_t;
+        }
     },
 }
 
@@ -257,8 +294,45 @@ let rotation_trials = {
     ],
     timeline_variables: resultList,
     sample: {
-        type: 'fixed-repetitions',
-        size: 3
+        type: 'custom',
+        fn: function (t) { // 抄书上的
+            let new_t = t.concat(t,t); //把目标数组复制三份，拼到一起
+
+            let loop_state = true; // 初始化循环状态
+
+            while (loop_state) {
+                loop_state = false;
+
+                for (let i = 0; i < new_t.length; i++) {
+                    let rand_index = Math.floor(Math.random() * (new_t.length - i) + i); // 这个随机怎么搞的？？？我没看懂啊？？？
+                    [new_t[i], new_t[rand_index]] = [new_t[rand_index], new_t[i]]; // 交换索引
+                }
+
+                let repeat = 1;
+
+                for (let i = 1; i < new_t.length; i++) {
+                    console.log([new_t[i], new_t[i - 1]])
+                    console.log([rotation_trials.timeline_variables[new_t[i]].orientation, rotation_trials.timeline_variables[new_t[i - 1]].orientation])
+
+                    let orientation = rotation_trials.timeline_variables[new_t[i]].orientation;
+                    let last_orientation = rotation_trials.timeline_variables[new_t[i - 1]].orientation;
+
+                    if (orientation === last_orientation) {
+                        repeat++;
+                    }
+                    else {
+                        repeat = 1;
+                    }
+
+                    if (repeat >= 4) {
+                        loop_state = true;
+                        break;
+                    }
+                }
+            }
+
+            return new_t;
+        }
     },
 }
 
