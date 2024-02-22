@@ -28,7 +28,7 @@ rotationList.forEach(item => {
     });
 });
 
-console.log(resultList);
+// console.log(resultList);
 
 // 初始化全局参数
 
@@ -182,45 +182,158 @@ let parity_trials = {
     ],
     sample: {
         type: 'custom',
-        fn: function (t) { // 抄书上的
-            let new_t = t.concat(t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t,t); //把目标数组复制二十份，拼到一起
+        fn: function (t) {
+            // 生成式伪随机序列算法
+            // 思想：将需要放进数组的元素按照需要的分类分成两个池子，随后从左到右依次生成这个数组。
+            // 如果两个池子的元素都符合条件，则随机选择一个；如果只有一个盒子满足条件，则只选择其中一个。
 
-            let loop_state = true; // 初始化循环状态
+            // 这里t的构成：[0, 1, 2, 3, 4, 5]
+            // 可以明确知道的是，0，2，4分别对应奇数，1，3，5分别对应偶数，我们需要20份这个数组
 
-            while (loop_state) {
-                loop_state = false;
+            // 第一步，创建数字池
+            // 在原始输入实际上不会修改的情况下，在函数内硬定义列表也不是一个坏事，但是注意这个方法不能推广
+            // 需要推广的情况下，已知原始数组中的两种类别是交替排列的，那么把奇数元素抽出来，偶数元素抽出来分成两个list就可以了
+            const odd_list = t.filter(function(element, index) {
+                return index % 2 == 0;
+            });
+            const even_list = t.filter(function(element, index) {
+                return index % 2 != 0;
+            });
 
-                for (let i = 0; i < new_t.length; i++) {
-                    let rand_index = Math.floor(Math.random() * (new_t.length - i) + i); // 这个随机怎么搞的？？？我没看懂啊？？？
-                    [new_t[i], new_t[rand_index]] = [new_t[rand_index], new_t[i]]; // 交换索引
+            const original_odd_pool = [...Array(20)].flatMap(() => odd_list);
+            const original_even_pool = [...Array(20)].flatMap(() => even_list);
+
+            //console.log(odd_pool)
+            //console.log(even_pool)
+
+            // 第二步，开始生成
+            // 初始化 生成空数组
+            // 初始化 两个判断变量 初始值为0
+            // 
+            // 循环下列语句
+            // 取元素语句
+            // if 奇数池子没有元素了 
+            //  if 偶数池子也没有元素了 生成成功 停止生成 结束循环
+            //  if 偶数池子还有元素 
+            //   if 偶数连续判断为真 生成失败 重新初始化
+            //   else 随机取一个偶数 跳到判断
+            // if 偶数池子没有元素了
+            //  if 奇数连续判断为真 生成失败 重新初始化
+            //  else 随机取一个奇数 跳到判断
+            // if 奇数和偶数都有
+            //  if 奇数连续判断为真 取偶数
+            //  if 偶数连续判断为真 取奇数
+            //  else 随机选择一个池子 随机从中取一个数
+            // 
+            // 判断语句
+            // if 上面取的是奇数 奇数++ 偶数=0
+            // else 上面取的是偶数 偶数++ 奇数=0
+            // if 奇数==3 奇数连续判断=true
+            // else 奇数连续判断=false
+            // if 偶数==3 偶数连续判断=true
+            // else 偶数连续判断=false
+
+            let new_t = [];
+            let oddCount = 0;
+            let evenCount = 0;
+            let success = false;
+            let index = -1;
+            let odd_pool = [...original_odd_pool]
+            let even_pool = [...original_even_pool];
+
+            while (success != true) {
+                let currentElement;
+
+                // 取元素语句
+                if (odd_pool.length === 0) {
+                    if (even_pool.length === 0) {
+                        // 生成成功，停止生成，结束循环
+                        success = true;
+                    } else {
+                        if (evenCount === 3) {
+                            // 偶数连续判断为真，生成失败，重新初始化
+                            new_t = [];
+                            oddCount = 0;
+                            evenCount = 0;
+                            index = -1;
+                            odd_pool = [...original_odd_pool]
+                            even_pool = [...original_even_pool];
+                            continue;
+                        } else {
+                            // 随机取一个偶数，跳到判断
+                            currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
+                            index = even_pool.indexOf(currentElement);
+                            if (index > -1) {
+                                even_pool.splice(index, 1);
+                            }
+                        }
+                    }
+                } else if (even_pool.length === 0) {
+                    if (oddCount === 3) {
+                        // 奇数连续判断为真，生成失败，重新初始化
+                        new_t = [];
+                        oddCount = 0;
+                        evenCount = 0;
+                        index = -1;
+                        odd_pool = [...original_odd_pool]
+                        even_pool = [...original_even_pool];
+                        continue;
+                    } else {
+                        // 随机取一个奇数，跳到判断
+                        currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
+                        index = odd_pool.indexOf(currentElement);
+                        if (index > -1) {
+                            odd_pool.splice(index, 1);
+                        }
+                    }
+                } else {
+                    if (oddCount === 3) {
+                        // 奇数连续判断为真，取偶数
+                        currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
+                        index = even_pool.indexOf(currentElement);
+                        if (index > -1) {
+                            even_pool.splice(index, 1);
+                        }
+                    } else if (evenCount === 3) {
+                        // 偶数连续判断为真，取奇数
+                        currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
+                        index = odd_pool.indexOf(currentElement);
+                        if (index > -1) {
+                            odd_pool.splice(index, 1);
+                        }
+                    } else {
+                        // 随机选择一个池子，随机从中取一个数
+                        const pool = Math.random() < 0.5 ? odd_pool : even_pool;
+                        currentElement = pool[Math.floor(Math.random() * pool.length)];
+                        index = pool.indexOf(currentElement);
+                        if (index > -1) {
+                            pool.splice(index, 1);
+                        }
+                    }
                 }
 
-                let repeat = 1;
-
-                for (let i = 1; i < new_t.length; i++) {
-                    console.log([new_t[i], new_t[i - 1]])
-                    console.log([parity_trials.timeline_variables[new_t[i]].parity, parity_trials.timeline_variables[new_t[i - 1]].parity])
-
-                    let parity = parity_trials.timeline_variables[new_t[i]].parity;
-                    let last_parity = parity_trials.timeline_variables[new_t[i - 1]].parity;
-
-                    if (parity === last_parity) {
-                        repeat++;
-                    }
-                    else {
-                        repeat = 1;
-                    }
-
-                    if (repeat >= 4) {
-                        loop_state = true;
-                        break;
-                    }
+                // 判断语句
+                if (currentElement % 2 === 0) {
+                    // 上面取的是偶数，偶数++，奇数=0
+                    evenCount++;
+                    oddCount = 0;
+                } else {
+                    // 上面取的是奇数，奇数++，偶数=0
+                    oddCount++;
+                    evenCount = 0;
                 }
+
+                // 将取到的元素添加到结果数组
+                // console.log(currentElement);
+                if (currentElement != undefined) {
+                    new_t.push(currentElement);
+                }
+                // console.log(new_t);
             }
 
             return new_t;
         }
-    },
+    }
 }
 
 let rotation_trials = {
@@ -295,40 +408,152 @@ let rotation_trials = {
     timeline_variables: resultList,
     sample: {
         type: 'custom',
-        fn: function (t) { // 抄书上的
-            let new_t = t.concat(t,t); //把目标数组复制三份，拼到一起
+        fn: function (t) {
+            // 生成式伪随机序列算法
+            // 思想：将需要放进数组的元素按照需要的分类分成两个池子，随后从左到右依次生成这个数组。
+            // 如果两个池子的元素都符合条件，则随机选择一个；如果只有一个盒子满足条件，则只选择其中一个。
 
-            let loop_state = true; // 初始化循环状态
+            // 第一步，创建数字池
+            // 在原始输入实际上不会修改的情况下，在函数内硬定义列表也不是一个坏事，但是注意这个方法不能推广
+            // 需要推广的情况下，已知原始数组中的两种类别是交替排列的，那么把奇数元素抽出来，偶数元素抽出来分成两个list就可以了
+            // 有一件好事是：这个list的旋转方向正好是交替排列的，这不巧了吗（
 
-            while (loop_state) {
-                loop_state = false;
+            const odd_list = t.filter(function(element, index) {
+                return index % 2 == 0;
+            });
+            const even_list = t.filter(function(element, index) {
+                return index % 2 != 0;
+            });
 
-                for (let i = 0; i < new_t.length; i++) {
-                    let rand_index = Math.floor(Math.random() * (new_t.length - i) + i); // 这个随机怎么搞的？？？我没看懂啊？？？
-                    [new_t[i], new_t[rand_index]] = [new_t[rand_index], new_t[i]]; // 交换索引
+            const original_odd_pool = [...Array(3)].flatMap(() => odd_list); //这个地方只需要复制3份
+            const original_even_pool = [...Array(3)].flatMap(() => even_list); 
+
+            //console.log(odd_pool)
+            //console.log(even_pool)
+
+            // 第二步，开始生成
+            // 初始化 生成空数组
+            // 初始化 两个判断变量 初始值为0
+            // 
+            // 循环下列语句
+            // 取元素语句
+            // if 奇数池子没有元素了 
+            //  if 偶数池子也没有元素了 生成成功 停止生成 结束循环
+            //  if 偶数池子还有元素 
+            //   if 偶数连续判断为真 生成失败 重新初始化
+            //   else 随机取一个偶数 跳到判断
+            // if 偶数池子没有元素了
+            //  if 奇数连续判断为真 生成失败 重新初始化
+            //  else 随机取一个奇数 跳到判断
+            // if 奇数和偶数都有
+            //  if 奇数连续判断为真 取偶数
+            //  if 偶数连续判断为真 取奇数
+            //  else 随机选择一个池子 随机从中取一个数
+            // 
+            // 判断语句
+            // if 上面取的是奇数 奇数++ 偶数=0
+            // else 上面取的是偶数 偶数++ 奇数=0
+            // if 奇数==3 奇数连续判断=true
+            // else 奇数连续判断=false
+            // if 偶数==3 偶数连续判断=true
+            // else 偶数连续判断=false
+
+            let new_t = [];
+            let oddCount = 0;
+            let evenCount = 0;
+            let success = false;
+            let index = -1;
+            let odd_pool = [...original_odd_pool]
+            let even_pool = [...original_even_pool];
+
+            while (success != true) {
+                let currentElement;
+
+                // 取元素语句
+                if (odd_pool.length === 0) {
+                    if (even_pool.length === 0) {
+                        // 生成成功，停止生成，结束循环
+                        success = true;
+                    } else {
+                        if (evenCount === 3) {
+                            // 偶数连续判断为真，生成失败，重新初始化
+                            new_t = [];
+                            oddCount = 0;
+                            evenCount = 0;
+                            index = -1;
+                            odd_pool = [...original_odd_pool]
+                            even_pool = [...original_even_pool];
+                            continue;
+                        } else {
+                            // 随机取一个偶数，跳到判断
+                            currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
+                            index = even_pool.indexOf(currentElement);
+                            if (index > -1) {
+                                even_pool.splice(index, 1);
+                            }
+                        }
+                    }
+                } else if (even_pool.length === 0) {
+                    if (oddCount === 3) {
+                        // 奇数连续判断为真，生成失败，重新初始化
+                        new_t = [];
+                        oddCount = 0;
+                        evenCount = 0;
+                        index = -1;
+                        odd_pool = [...original_odd_pool]
+                        even_pool = [...original_even_pool];
+                        continue;
+                    } else {
+                        // 随机取一个奇数，跳到判断
+                        currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
+                        index = odd_pool.indexOf(currentElement);
+                        if (index > -1) {
+                            odd_pool.splice(index, 1);
+                        }
+                    }
+                } else {
+                    if (oddCount === 3) {
+                        // 奇数连续判断为真，取偶数
+                        currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
+                        index = even_pool.indexOf(currentElement);
+                        if (index > -1) {
+                            even_pool.splice(index, 1);
+                        }
+                    } else if (evenCount === 3) {
+                        // 偶数连续判断为真，取奇数
+                        currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
+                        index = odd_pool.indexOf(currentElement);
+                        if (index > -1) {
+                            odd_pool.splice(index, 1);
+                        }
+                    } else {
+                        // 随机选择一个池子，随机从中取一个数
+                        const pool = Math.random() < 0.5 ? odd_pool : even_pool;
+                        currentElement = pool[Math.floor(Math.random() * pool.length)];
+                        index = pool.indexOf(currentElement);
+                        if (index > -1) {
+                            pool.splice(index, 1);
+                        }
+                    }
                 }
 
-                let repeat = 1;
-
-                for (let i = 1; i < new_t.length; i++) {
-                    console.log([new_t[i], new_t[i - 1]])
-                    console.log([rotation_trials.timeline_variables[new_t[i]].orientation, rotation_trials.timeline_variables[new_t[i - 1]].orientation])
-
-                    let orientation = rotation_trials.timeline_variables[new_t[i]].orientation;
-                    let last_orientation = rotation_trials.timeline_variables[new_t[i - 1]].orientation;
-
-                    if (orientation === last_orientation) {
-                        repeat++;
-                    }
-                    else {
-                        repeat = 1;
-                    }
-
-                    if (repeat >= 4) {
-                        loop_state = true;
-                        break;
-                    }
+                // 判断语句
+                if (currentElement % 2 === 0) {
+                    // 上面取的是偶数，偶数++，奇数=0
+                    evenCount++;
+                    oddCount = 0;
+                } else {
+                    // 上面取的是奇数，奇数++，偶数=0
+                    oddCount++;
+                    evenCount = 0;
                 }
+
+                // 将取到的元素添加到结果数组
+                // console.log(currentElement);
+                if (currentElement != undefined) {
+                    new_t.push(currentElement);
+                }
+                // console.log(new_t);
             }
 
             return new_t;
