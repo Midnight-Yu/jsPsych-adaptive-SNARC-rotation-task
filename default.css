@@ -9,7 +9,7 @@ body {
     cursor: none;
 }
 
-/*但是恢复实验外的部分的鼠标*/
+/*但是恢复实验前数据收集部分的鼠标*/
 .non-experiment {
     background-color: gray;
     cursor: auto;
@@ -38,6 +38,8 @@ body {
     /*display: flex;*/
 }
 
+/*由于直接指定在css-classes里边框是不隐藏的，
+所以在实验中写成了行内，叠加在上一个样式之上*/
 .experiment-content-rotation {
     top: 50%;
     left: 50%;
