@@ -35,9 +35,9 @@ rotationList.forEach(item => {
 let parity_trial_times = 0;
 let rotation_trial_times = 0;
 
-var participant_index;
-var gender;
-var age;
+let participant_index;
+let gender;
+let age;
 
 let jsPsych = initJsPsych({
     on_finish: function () {
@@ -107,7 +107,11 @@ let instruction = {
         document.addEventListener("keydown", endExperiment)
     },
     choices: " "
-}
+};
+
+let instruction_parity = {
+    
+};
 
 let parity_trials = {
     type: jsPsychHtmlKeyboardResponse,
