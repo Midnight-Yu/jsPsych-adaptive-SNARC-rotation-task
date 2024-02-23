@@ -28,15 +28,13 @@ rotationList.forEach(item => {
     });
 });
 
-// console.log(resultList);
-
 // 初始化全局参数
 
 let parity_trial_times = 0;
 let rotation_trial_times = 0;
 
 let parity_practice_corr_count = 0;
-let roration_practice_corr_count = 0;
+let rotation_practice_corr_count = 0;
 
 let participant_index;
 let gender;
@@ -145,16 +143,18 @@ let instruction_parity = {
         {   // 第一页
             stimulus: `
             <div class='experiment-instruction'>
-            <p>这个部分的规则如下：</p>
-            <p>当你看到奇数时，请按下<span style="color:orange"> F </span>键</p>
-            <p>当你看到偶数时，请按下<span style="color:orange"> J </span>键</p>
-            <p>&nbsp;</p>
-            <p>例如，当你看到 3 时，请按下 F 键</p>
-            <p>例如，当你看到 6 时，请按下 J 键</p>
-            <p>&nbsp;</p>
-            <p>注意，请不要用同一只手按键</p>
-            <p>请将左手放在 F 键上，右手放在 J 键上</p>
-            <p>&nbsp;</p>
+            <h2>第一部分</h2>
+
+            <p>这个部分的规则如下<br><br>
+            当你看到奇数时，请按下<span style="color:orange"> F </span>键<br>
+            当你看到偶数时，请按下<span style="color:orange"> J </span>键</p>
+
+            <p>例如，当你看到 3 时，请按下 F 键<br>
+            例如，当你看到 6 时，请按下 J 键</p>
+
+            <p>注意，请不要用同一只手按键<br>
+            请将左手放在 F 键上，右手放在 J 键上</p>
+
             <p>按空格键进入练习</p>
             </div>
             `,
@@ -276,7 +276,7 @@ let parity_training = {
             return false;
         }
         else {
-            practice_2_corr_count = 0;
+            parity_practice_corr_count = 0;
             return true;
         }
     }
@@ -475,6 +475,164 @@ let parity_trials = {
     }
 }
 
+let instruction_rotation = {
+    type: jsPsychHtmlKeyboardResponse,
+    timeline: [
+        {   // 第一页
+            stimulus: `
+            <div class='experiment-instruction'>
+            <h2>第二部分</h2>
+
+            <p>这个部分的规则如下<br><br>
+            当你看到图形向左旋转时，请按下<span style="color:cyan"> F </span>键<br>
+            当你看到图形向右旋转时，请按下<span style="color:cyan"> J </span>键</p>
+
+            <p>按空格键查看下一页</p>
+            </div>
+            `,
+            choices: [' '],
+            post_trial_gap: 1000
+        },
+        {   // 第二页
+            stimulus: `
+            <div class='experiment-instruction'>
+            <div class='experiment-content-rotation' style='transform: rotate(-5deg); font-size:500%'> 2 </div>
+            <p>例如，当你看到这样的图形时，因为它朝<span style="color:cyan">左</span>旋转，因此请你按<span style="color:cyan"> F </span>键</p>
+            <p>上面显示的数字和你要做的事情无关，你只需要判断它的方向</p>
+            <p>按空格键查看下一页</p>
+            </div>
+            `,
+            choices: [' '],
+            post_trial_gap: 1000
+        },
+        {
+            stimulus:`
+            <div class='experiment-instruction'>
+            <div class='experiment-content-rotation' style='transform: rotate(+5deg); font-size:500%'> 5 </div>
+            <p>例如，当你看到这样的图形时，因为它朝<span style="color:cyan">右</span>旋转，因此请你按<span style="color:cyan"> J </span>键</p>
+            <p>上面显示的数字和你要做的事情无关，你只需要判断它的方向</p>
+            <p>按空格键进入练习阶段</p>
+            </div>
+            `,
+            choices: [' '],
+            post_trial_gap: 1000
+        }
+    ]
+};
+
+let rotation_training = {
+    type: jsPsychHtmlKeyboardResponse,
+    css_classes: "experiment-content",
+    save_trial_parameters: {
+        trial_duration: true,
+        choices: true,
+        post_trial_gap: true
+    },
+    data: {
+        parity: jsPsych.timelineVariable('parity'),
+        orientation: jsPsych.timelineVariable('orientation'),
+        rotation: jsPsych.timelineVariable('rotation'),
+    },
+    timeline: [
+        {  //空屏
+            stimulus: " ",
+            choices: 'NO_KEYS',
+            trial_duration: 1000
+        },
+        { //注视点
+            stimulus: "+",
+            choices: 'NO_KEYS',
+            trial_duration: 500,
+            post_trial_gap: function () {
+                let random_interval = 400 + 200 * Math.random();
+                return random_interval;
+            }
+        },
+        {  //刺激
+            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>" + jsPsych.timelineVariable('content') + "</div>",
+            //怎么写得这么复杂的
+            choices: ["f", "j"],
+            //stimulus_duration: 150,
+            on_finish: function (data) {
+                data.is_trial = false;
+                data.trial_class = 'rotation';
+                //赋予正确答案值
+                if (data.orientation === '-') {
+                    data.correct = (data.response === 'f');
+                }
+                else {
+                    data.correct = (data.response === 'j');
+                }
+
+                if (data.correct) {
+                    rotation_practice_corr_count++
+                }
+            }
+        },
+        { //反馈，注意只有练习阶段有反馈
+            stimulus: function () {
+                let last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+                if (last_trial_correct) {
+                    return "<p><span style='color:green; font-size:20%'>正确</span></p>";
+                } else {
+                    return "<p><span style='color:red; font-size:20%'>错误</span></p>";
+                };
+            },
+            choices: 'NO_KEYS',
+            trial_duration: 1000,
+        }
+    ],
+    timeline_variables: resultList,
+    sample: {
+        type: 'custom',
+        fn: function (t) { // 抄书上的
+            let new_t = t.concat(t); //把目标数组复制两份，拼到一起
+
+            let loop_state = true; // 初始化循环状态
+
+            while (loop_state) {
+                loop_state = false;
+
+                for (let i = 0; i < new_t.length; i++) {
+                    let rand_index = Math.floor(Math.random() * (new_t.length - i) + i); 
+                    [new_t[i], new_t[rand_index]] = [new_t[rand_index], new_t[i]]; // 交换索引
+                }
+
+                let repeat = 1;
+
+                for (let i = 1; i < new_t.length; i++) {
+                    let orientation = rotation_training.timeline_variables[new_t[i]].orientation;
+                    let last_orientation = rotation_training.timeline_variables[new_t[i - 1]].orientation;
+
+                    if (orientation === last_orientation) {
+                        repeat++;
+                    }
+                    else {
+                        repeat = 1;
+                    }
+
+                    if (repeat >= 4) {
+                        loop_state = true;
+                        break;
+                    }
+                }
+            }
+
+            sampled_t = new_t.slice(0,10)
+            return sampled_t;
+        }
+    },
+    loop_function: function (data) {
+        if (rotation_practice_corr_count >= 7) {
+            return false;
+        }
+        else {
+            rotation_practice_corr_count = 0;
+            return true;
+        }
+    }
+};
+
 let rotation_trials = {
     type: jsPsychHtmlKeyboardResponse,
     css_classes: "experiment-content",
@@ -484,7 +642,7 @@ let rotation_trials = {
         post_trial_gap: true
     },
     data: {
-        category: jsPsych.timelineVariable('category'),
+        parity: jsPsych.timelineVariable('parity'),
         orientation: jsPsych.timelineVariable('orientation'),
         rotation: jsPsych.timelineVariable('rotation'),
     },
@@ -673,8 +831,10 @@ let ending = {
 }
 
 jsPsych.run([
-    welcome, data_collect, instruction, 
-    instruction_parity, practice_instruction, parity_training, practice_feedback, parity_trials, 
-    rotation_trials, ending
+    /*welcome, data_collect, 
+    instruction,
+    instruction_parity, practice_instruction, parity_training, practice_feedback, parity_trials, */
+    instruction_rotation, practice_instruction, rotation_training, practice_feedback, rotation_trials, 
+    ending
 ])
 
