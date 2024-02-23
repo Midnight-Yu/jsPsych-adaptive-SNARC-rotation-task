@@ -78,9 +78,9 @@ let data_collect = {
     type: jsPsychSurveyHtmlForm,
     css_classes: ['non-experiment'],
     html: `
-    <p>您的编号：<input type="text" name="participant_index" style="color:black" placeholder="如不知道，请询问主试"></p>
+    <p>您的编号：<input type="text" name="participant_index" style="color:black" placeholder="如不知道，请询问实验人员"></p>
     <p>您的性别：<input type="radio" name="gender" value = "1" >男<input type="radio" name="gender" value = "2" >女</p>
-    <p>您的年龄：<input type="text" name="age" style="color:black" placeholder="请输入数字，如23"></p>
+    <p>您的年龄：<input type="text" name="age" style="color:black" placeholder="请输入阿拉伯数字，如23"></p>
     `,
     button_label: '提交',
     on_finish: function (data) {
@@ -95,16 +95,18 @@ let data_collect = {
 let instruction = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
-    <p>这是一个奇偶判断实验</p>
-    <p>当你看到屏幕上的数字后，请按键反应</p>
-    <p>如果数字是奇数（单数），请按 F 键</p>
-    <p>如果数字是偶数（双数），请按 J 键</p>
+    <p>欢迎加入实验！</p>
+    <p>本实验分为两个阶段，两个阶段有不同的任务</p>
+    <p>每个阶段开始前，都有练习流程帮助你熟悉实验</p>
+    <p></p>
+    <p>准备好后，按空格键进入实验</p>
     `,
     post_trial_gap: 500,
     css_classes: "experiment-instruction",
     on_start: function () {
         document.addEventListener("keydown", endExperiment)
     },
+    choices: " "
 }
 
 let parity_trials = {
