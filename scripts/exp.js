@@ -35,6 +35,9 @@ rotationList.forEach(item => {
 let parity_trial_times = 0;
 let rotation_trial_times = 0;
 
+let parity_practice_corr_count = 0;
+let roration_practice_corr_count = 0;
+
 let participant_index;
 let gender;
 let age;
@@ -101,7 +104,7 @@ let instruction = {
     <p></p>
     <p>准备好后，按空格键进入实验</p>
     `,
-    post_trial_gap: 500,
+    post_trial_gap: 1000,
     css_classes: "experiment-instruction",
     on_start: function () {
         document.addEventListener("keydown", endExperiment)
@@ -109,8 +112,174 @@ let instruction = {
     choices: " "
 };
 
+// 练习阶段提示，注意该段落被复用
+let practice_instruction = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `
+    <div class='experiment-instruction'>
+    <p>即将进入练习阶段</p>
+    <p>练习正确率达到 70% 后，可进入正式实验</p>
+    <p>按空格键开始</p>
+    </div>
+    `,
+    choices: [' '],
+    post_trial_gap: 1000
+};
+
+// 练习阶段结束、正式阶段开始前的指导语，注意该部分被复用
+let practice_feedback = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `<div class='experiment-instruction'> 
+    <p>练习阶段已结束，你的正确率已达到要求</p>
+    <p>接下来将进入正式实验</p>
+    <p>&nbsp;</p>
+    <p>按空格键进入正式实验</p>
+    </div>
+    `,
+    choices: [' ']
+};
+
 let instruction_parity = {
-    
+    type: jsPsychHtmlKeyboardResponse,
+    timeline: [
+        {   // 第一页
+            stimulus: `
+            <div class='experiment-instruction'>
+            <p>这个部分的规则如下：</p>
+            <p>当你看到奇数时，请按下<span style="color:orange"> F </span>键</p>
+            <p>当你看到偶数时，请按下<span style="color:orange"> J </span>键</p>
+            <p>&nbsp;</p>
+            <p>例如，当你看到 3 时，请按下 F 键</p>
+            <p>例如，当你看到 6 时，请按下 J 键</p>
+            <p>&nbsp;</p>
+            <p>注意，请不要用同一只手按键</p>
+            <p>请将左手放在 F 键上，右手放在 J 键上</p>
+            <p>&nbsp;</p>
+            <p>按空格键进入练习</p>
+            </div>
+            `,
+            choices: [' '],
+            post_trial_gap: 1000
+        }
+    ]
+};
+
+let parity_training = {
+    type: jsPsychHtmlKeyboardResponse,
+    css_classes: "experiment-content",
+    save_trial_parameters: {
+        trial_duration: true,
+        choices: true,
+        post_trial_gap: true
+    },
+    data: {
+        parity: jsPsych.timelineVariable('parity')
+    },
+    timeline: [
+        {  //空屏
+            stimulus: " ",
+            choices: 'NO_KEYS',
+            trial_duration: 1000
+        },
+        { //注视点
+            stimulus: "+",
+            choices: 'NO_KEYS',
+            trial_duration: 500,
+            post_trial_gap: function () {
+                let random_interval = 400 + 200 * Math.random();
+                return random_interval;
+            }
+        },
+        {  //刺激
+            stimulus: jsPsych.timelineVariable('content'),
+            choices: ["f", "j"],
+            //stimulus_duration: 150
+            on_finish: function (data) {
+                data.is_trial = false;
+                data.trial_class = 'parity';
+                //赋予正确答案值
+                if (data.parity === 1) {
+                    data.correct = (data.response === 'f');
+                }
+                else {
+                    data.correct = (data.response === 'j');
+                }
+
+                if (data.correct) {
+                    parity_practice_corr_count++
+                }
+            }
+        },
+        { //反馈，注意只有练习阶段有反馈
+            stimulus: function () {
+                let last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+                if (last_trial_correct) {
+                    return "<p><span style='color:green; font-size:20%'>正确</span></p>";
+                } else {
+                    return "<p><span style='color:red; font-size:20%'>错误</span></p>";
+                };
+            },
+            choices: 'NO_KEYS',
+            trial_duration: 1000,
+        }
+
+    ],
+    timeline_variables: [
+        { content: "1", parity: 1 },
+        { content: "2", parity: 2 },
+        { content: "3", parity: 1 },
+        { content: "4", parity: 2 },
+        { content: "5", parity: 1 },
+        { content: "6", parity: 2 }
+    ],
+    sample: {
+        type: 'custom',
+        fn: function (t) { // 抄书上的
+            let new_t = t.concat(t); //把目标数组复制两份，拼到一起
+
+            let loop_state = true; // 初始化循环状态
+
+            while (loop_state) {
+                loop_state = false;
+
+                for (let i = 0; i < new_t.length; i++) {
+                    let rand_index = Math.floor(Math.random() * (new_t.length - i) + i); 
+                    [new_t[i], new_t[rand_index]] = [new_t[rand_index], new_t[i]]; // 交换索引
+                }
+
+                let repeat = 1;
+
+                for (let i = 1; i < new_t.length; i++) {
+                    let parity = parity_training.timeline_variables[new_t[i]].parity;
+                    let last_parity = parity_training.timeline_variables[new_t[i - 1]].parity;
+
+                    if (parity === last_parity) {
+                        repeat++;
+                    }
+                    else {
+                        repeat = 1;
+                    }
+
+                    if (repeat >= 4) {
+                        loop_state = true;
+                        break;
+                    }
+                }
+            }
+
+            sampled_t = new_t.slice(0,10)
+            return sampled_t;
+        }
+    },
+    loop_function: function (data) {
+        if (parity_practice_corr_count >= 7) {
+            return false;
+        }
+        else {
+            practice_2_corr_count = 0;
+            return true;
+        }
+    }
 };
 
 let parity_trials = {
@@ -135,7 +304,7 @@ let parity_trials = {
             choices: 'NO_KEYS',
             trial_duration: 500,
             post_trial_gap: function () {
-                random_interval = 400 + 200 * Math.random();
+                let random_interval = 400 + 200 * Math.random();
                 return random_interval;
             }
         },
@@ -149,7 +318,7 @@ let parity_trials = {
                 data.is_trial = true;
                 data.trial_class = 'parity';
                 //赋予正确答案值
-                if (data.category === 1) {
+                if (data.parity === 1) {
                     data.correct = (data.response === 'f');
                 }
                 else {
@@ -158,14 +327,16 @@ let parity_trials = {
             }
         },
         {  //休息试次
+            css_classes: "experiment-instruction",
             timeline: [
                 {
-                    stimulus: `休息试次 30s`,
+                    stimulus: `请休息片刻，稍后实验将继续`,
                     trial_duration: 30000,
                     choices: 'NO_KEYS'
                 },
                 {
-                    stimulus: `休息已终止，按空格继续`,
+                    stimulus: `休息已终止，按空格可继续实验`,
+                    choices: ' '
                 },
             ],
             conditional_function: function () {
@@ -193,12 +364,6 @@ let parity_trials = {
             // 思想：将需要放进数组的元素按照需要的分类分成两个池子，随后从左到右依次生成这个数组。
             // 如果两个池子的元素都符合条件，则随机选择一个；如果只有一个盒子满足条件，则只选择其中一个。
 
-            // 这里t的构成：[0, 1, 2, 3, 4, 5]
-            // 可以明确知道的是，0，2，4分别对应奇数，1，3，5分别对应偶数，我们需要20份这个数组
-
-            // 第一步，创建数字池
-            // 在原始输入实际上不会修改的情况下，在函数内硬定义列表也不是一个坏事，但是注意这个方法不能推广
-            // 需要推广的情况下，已知原始数组中的两种类别是交替排列的，那么把奇数元素抽出来，偶数元素抽出来分成两个list就可以了
             const odd_list = t.filter(function(element, index) {
                 return index % 2 == 0;
             });
@@ -208,36 +373,6 @@ let parity_trials = {
 
             const original_odd_pool = [...Array(20)].flatMap(() => odd_list);
             const original_even_pool = [...Array(20)].flatMap(() => even_list);
-
-            //console.log(odd_pool)
-            //console.log(even_pool)
-
-            // 第二步，开始生成
-            // 初始化 生成空数组
-            // 初始化 两个判断变量 初始值为0
-            // 
-            // 循环下列语句
-            // 取元素语句
-            // if 奇数池子没有元素了 
-            //  if 偶数池子也没有元素了 生成成功 停止生成 结束循环
-            //  if 偶数池子还有元素 
-            //   if 偶数连续判断为真 生成失败 重新初始化
-            //   else 随机取一个偶数 跳到判断
-            // if 偶数池子没有元素了
-            //  if 奇数连续判断为真 生成失败 重新初始化
-            //  else 随机取一个奇数 跳到判断
-            // if 奇数和偶数都有
-            //  if 奇数连续判断为真 取偶数
-            //  if 偶数连续判断为真 取奇数
-            //  else 随机选择一个池子 随机从中取一个数
-            // 
-            // 判断语句
-            // if 上面取的是奇数 奇数++ 偶数=0
-            // else 上面取的是偶数 偶数++ 奇数=0
-            // if 奇数==3 奇数连续判断=true
-            // else 奇数连续判断=false
-            // if 偶数==3 偶数连续判断=true
-            // else 偶数连续判断=false
 
             let new_t = [];
             let oddCount = 0;
@@ -330,11 +465,9 @@ let parity_trials = {
                 }
 
                 // 将取到的元素添加到结果数组
-                // console.log(currentElement);
                 if (currentElement != undefined) {
                     new_t.push(currentElement);
                 }
-                // console.log(new_t);
             }
 
             return new_t;
@@ -366,7 +499,7 @@ let rotation_trials = {
             choices: 'NO_KEYS',
             trial_duration: 500,
             post_trial_gap: function () {
-                random_interval = 400 + 200 * Math.random();
+                let random_interval = 400 + 200 * Math.random();
                 return random_interval;
             }
         },
@@ -392,12 +525,12 @@ let rotation_trials = {
         {  //休息试次
             timeline: [
                 {
-                    stimulus: `休息试次 30s`,
+                    stimulus: `请休息片刻，稍后实验将继续`,
                     trial_duration: 30000,
                     choices: 'NO_KEYS'
                 },
                 {
-                    stimulus: `休息已终止，按空格继续`,
+                    stimulus: `休息已终止，按空格可继续实验`,
                     choices: ' '
                 },
             ],
@@ -419,11 +552,6 @@ let rotation_trials = {
             // 思想：将需要放进数组的元素按照需要的分类分成两个池子，随后从左到右依次生成这个数组。
             // 如果两个池子的元素都符合条件，则随机选择一个；如果只有一个盒子满足条件，则只选择其中一个。
 
-            // 第一步，创建数字池
-            // 在原始输入实际上不会修改的情况下，在函数内硬定义列表也不是一个坏事，但是注意这个方法不能推广
-            // 需要推广的情况下，已知原始数组中的两种类别是交替排列的，那么把奇数元素抽出来，偶数元素抽出来分成两个list就可以了
-            // 有一件好事是：这个list的旋转方向正好是交替排列的，这不巧了吗（
-
             const odd_list = t.filter(function(element, index) {
                 return index % 2 == 0;
             });
@@ -433,36 +561,6 @@ let rotation_trials = {
 
             const original_odd_pool = [...Array(3)].flatMap(() => odd_list); //这个地方只需要复制3份
             const original_even_pool = [...Array(3)].flatMap(() => even_list); 
-
-            //console.log(odd_pool)
-            //console.log(even_pool)
-
-            // 第二步，开始生成
-            // 初始化 生成空数组
-            // 初始化 两个判断变量 初始值为0
-            // 
-            // 循环下列语句
-            // 取元素语句
-            // if 奇数池子没有元素了 
-            //  if 偶数池子也没有元素了 生成成功 停止生成 结束循环
-            //  if 偶数池子还有元素 
-            //   if 偶数连续判断为真 生成失败 重新初始化
-            //   else 随机取一个偶数 跳到判断
-            // if 偶数池子没有元素了
-            //  if 奇数连续判断为真 生成失败 重新初始化
-            //  else 随机取一个奇数 跳到判断
-            // if 奇数和偶数都有
-            //  if 奇数连续判断为真 取偶数
-            //  if 偶数连续判断为真 取奇数
-            //  else 随机选择一个池子 随机从中取一个数
-            // 
-            // 判断语句
-            // if 上面取的是奇数 奇数++ 偶数=0
-            // else 上面取的是偶数 偶数++ 奇数=0
-            // if 奇数==3 奇数连续判断=true
-            // else 奇数连续判断=false
-            // if 偶数==3 偶数连续判断=true
-            // else 偶数连续判断=false
 
             let new_t = [];
             let oddCount = 0;
@@ -555,11 +653,9 @@ let rotation_trials = {
                 }
 
                 // 将取到的元素添加到结果数组
-                // console.log(currentElement);
                 if (currentElement != undefined) {
                     new_t.push(currentElement);
                 }
-                // console.log(new_t);
             }
 
             return new_t;
@@ -577,6 +673,8 @@ let ending = {
 }
 
 jsPsych.run([
-    welcome, data_collect, instruction, parity_trials, rotation_trials, ending
+    welcome, data_collect, instruction, 
+    instruction_parity, practice_instruction, parity_training, practice_feedback, parity_trials, 
+    rotation_trials, ending
 ])
 
