@@ -1,7 +1,8 @@
-/*Adaptive rotation SNARC effect experiment: Pre-Experiment*/
-/*240208*/
+/*Adaptive rotation SNARC effect experiment: Experiment*/
+/*240208 - Unfinished*/
 
 //列表生成
+/*
 const originalList = [
     { content: "1", parity: 1 },
     { content: "2", parity: 2 },
@@ -30,6 +31,7 @@ rotationList.forEach(item => {
         resultList.push({ ...item, orientation });
     });
 });
+*/
 
 // 初始化全局参数
 
@@ -655,7 +657,7 @@ let rotation_trials = {
             choices: 'NO_KEYS',
             trial_duration: 1000
         },
-        { //注视点
+        {   //注视点
             stimulus: "+",
             choices: 'NO_KEYS',
             trial_duration: 500,
@@ -664,7 +666,7 @@ let rotation_trials = {
                 return random_interval;
             }
         },
-        {  //刺激
+        {   //刺激
             stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>" + jsPsych.timelineVariable('content') + "</div>",
             //怎么写得这么复杂的
             choices: ["f", "j"],
