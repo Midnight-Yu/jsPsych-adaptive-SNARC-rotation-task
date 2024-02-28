@@ -1,3 +1,6 @@
+/*Adaptive rotation SNARC effect experiment: Pre-Experiment*/
+/*240208*/
+
 //列表生成
 const originalList = [
     { content: "1", parity: 1 },
