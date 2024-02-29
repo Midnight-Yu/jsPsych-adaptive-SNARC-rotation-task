@@ -1,5 +1,5 @@
 /*Adaptive rotation SNARC effect experiment: Pre-Experiment*/
-/*240208*/
+/*240228*/
 
 //列表生成
 const originalList = [
