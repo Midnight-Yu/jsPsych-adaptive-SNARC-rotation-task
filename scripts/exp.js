@@ -11,9 +11,9 @@ const originalList = [
     { content: "6", parity: 2 }
 ];
 
-const rotationValues = ["5"];
-
 const orientationMark = ["+", "-"]
+
+const rotationValues = ["5"];
 
 let rotationList = [];
 
@@ -27,6 +27,7 @@ originalList.forEach(item => {
     });
 });
 
+
 rotationList.forEach(item => {
     orientationMark.forEach(orientation => {
         simpleList.push({ ...item, orientation });
@@ -39,6 +40,8 @@ resultList = simpleList.concat(simpleList);
 
 let parity_trial_times = 0;
 let rotation_trial_times = 0;
+
+let rotation_block_count = 0;
 
 let parity_practice_corr_count = 0;
 let rotation_practice_corr_count = 0;
@@ -653,6 +656,11 @@ let rotation_trials = {
         orientation: jsPsych.timelineVariable('orientation'),
         rotation: jsPsych.timelineVariable('rotation'),
     },
+    on_timeline_finish: function ( ) {
+        
+    },
+    timeline_variables: resultList,
+    //repetitions: 8,
     timeline: [
         {  //空屏
             stimulus: " ",
@@ -709,7 +717,6 @@ let rotation_trials = {
             },
         }
     ],
-    timeline_variables: resultList,
     sample: {
         type: 'custom',
         fn: function (t) {
@@ -724,7 +731,7 @@ let rotation_trials = {
                 return index % 2 != 0;
             });
 
-            const original_odd_pool = [...Array(1)].flatMap(() => odd_list); //这个地方只需要复制3份
+            const original_odd_pool = [...Array(1)].flatMap(() => odd_list); 
             const original_even_pool = [...Array(1)].flatMap(() => even_list); 
 
             let new_t = [];
@@ -825,7 +832,7 @@ let rotation_trials = {
 
             return new_t;
         }
-    },
+    }
 }
 
 let ending = {
@@ -838,10 +845,10 @@ let ending = {
 }
 
 jsPsych.run([
-    welcome, data_collect, 
+    /*welcome, data_collect, 
     instruction,
     instruction_parity, practice_instruction, parity_training, practice_feedback, parity_trials, 
-    instruction_rotation, practice_instruction, rotation_training, practice_feedback, rotation_trials, 
+    instruction_rotation, practice_instruction, rotation_training, practice_feedback,*/ rotation_trials, 
     ending
 ])
 
