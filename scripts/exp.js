@@ -15,9 +15,11 @@ const rotationValues = ["5"];
 
 const orientationMark = ["+", "-"]
 
-const rotationList = [];
+let rotationList = [];
 
-const resultList = [];
+let simpleList = [];
+
+let resultList = [];
 
 originalList.forEach(item => {
     rotationValues.forEach(rotation => {
@@ -27,9 +29,11 @@ originalList.forEach(item => {
 
 rotationList.forEach(item => {
     orientationMark.forEach(orientation => {
-        resultList.push({ ...item, orientation });
+        simpleList.push({ ...item, orientation });
     });
 });
+
+resultList = simpleList.concat(simpleList);
 
 // 初始化全局参数
 
@@ -720,8 +724,8 @@ let rotation_trials = {
                 return index % 2 != 0;
             });
 
-            const original_odd_pool = [...Array(3)].flatMap(() => odd_list); //这个地方只需要复制3份
-            const original_even_pool = [...Array(3)].flatMap(() => even_list); 
+            const original_odd_pool = [...Array(1)].flatMap(() => odd_list); //这个地方只需要复制3份
+            const original_even_pool = [...Array(1)].flatMap(() => even_list); 
 
             let new_t = [];
             let oddCount = 0;
