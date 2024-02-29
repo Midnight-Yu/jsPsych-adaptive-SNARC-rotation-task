@@ -13,8 +13,6 @@ const originalList = [
 
 const orientationMark = ["+", "-"]
 
-const rotationValues = ["5"];
-
 let rotationList = [];
 
 let simpleList = [];
@@ -22,13 +20,6 @@ let simpleList = [];
 let resultList = [];
 
 originalList.forEach(item => {
-    rotationValues.forEach(rotation => {
-        rotationList.push({ ...item, rotation });
-    });
-});
-
-
-rotationList.forEach(item => {
     orientationMark.forEach(orientation => {
         simpleList.push({ ...item, orientation });
     });
@@ -41,7 +32,8 @@ resultList = simpleList.concat(simpleList);
 let parity_trial_times = 0;
 let rotation_trial_times = 0;
 
-let rotation_block_count = 0;
+let rotation_value = 5;
+let standard_rt = 400; //先随便写一个
 
 let parity_practice_corr_count = 0;
 let rotation_practice_corr_count = 0;
@@ -654,13 +646,13 @@ let rotation_trials = {
     data: {
         parity: jsPsych.timelineVariable('parity'),
         orientation: jsPsych.timelineVariable('orientation'),
-        rotation: jsPsych.timelineVariable('rotation'),
+        rotation: rotation_value,
     },
     on_timeline_finish: function ( ) {
         
     },
     timeline_variables: resultList,
-    //repetitions: 8,
+    repetitions: 8,
     timeline: [
         {  //空屏
             stimulus: " ",
@@ -677,7 +669,7 @@ let rotation_trials = {
             }
         },
         {   //刺激
-            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + "deg)'>" + jsPsych.timelineVariable('content') + "</div>",
+            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + rotation_value + "deg)'>" + jsPsych.timelineVariable('content') + "</div>",
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
