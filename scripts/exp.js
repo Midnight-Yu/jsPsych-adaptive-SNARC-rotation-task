@@ -2,7 +2,6 @@
 /*240208 - Unfinished*/
 
 //列表生成
-/*
 const originalList = [
     { content: "1", parity: 1 },
     { content: "2", parity: 2 },
@@ -12,7 +11,7 @@ const originalList = [
     { content: "6", parity: 2 }
 ];
 
-const rotationValues = ["5deg", "7deg", "9deg", "11deg", "13deg"];
+const rotationValues = ["5"];
 
 const orientationMark = ["+", "-"]
 
@@ -31,7 +30,6 @@ rotationList.forEach(item => {
         resultList.push({ ...item, orientation });
     });
 });
-*/
 
 // 初始化全局参数
 
@@ -554,7 +552,7 @@ let rotation_training = {
             }
         },
         {  //刺激
-            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>" + jsPsych.timelineVariable('content') + "</div>",
+            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + "deg)'>" + jsPsych.timelineVariable('content') + "</div>",
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
@@ -667,7 +665,7 @@ let rotation_trials = {
             }
         },
         {   //刺激
-            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + ")'>" + jsPsych.timelineVariable('content') + "</div>",
+            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + "deg)'>" + jsPsych.timelineVariable('content') + "</div>",
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
