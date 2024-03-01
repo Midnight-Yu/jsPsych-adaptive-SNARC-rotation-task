@@ -29,16 +29,16 @@ resultList = simpleList.concat(simpleList);
 
 // 初始化全局参数
 
-let parity_trial_times = 0;
+let parity_trial_times = 0; //休息试次检测变量
 let rotation_trial_times = 0;
 
-let rotation_value = 5;
+let rotation_value = 5; //旋转试次自适应需要的变量
 let standard_rt = 400; //先随便写一个
 
-let parity_practice_corr_count = 0;
+let parity_practice_corr_count = 0; //练习试次检测正确率的变量
 let rotation_practice_corr_count = 0;
 
-let participant_index;
+let participant_index; //被试数据收集
 let gender;
 let age;
 
@@ -651,6 +651,7 @@ let rotation_trials = {
     on_timeline_finish: function ( ) {
         
     },
+
     timeline_variables: resultList,
     repetitions: 8,
     timeline: [
