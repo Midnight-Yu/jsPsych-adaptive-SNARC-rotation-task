@@ -34,6 +34,7 @@ let rotation_trial_times = 0;
 
 let rotation_value = 5; //旋转试次自适应需要的变量
 let standard_rt = 400; //先随便写一个
+let rotation_rt_list = [];
 
 let parity_practice_corr_count = 0; //练习试次检测正确率的变量
 let rotation_practice_corr_count = 0;
@@ -649,9 +650,11 @@ let rotation_trials = {
         rotation: rotation_value,
     },
     on_timeline_finish: function ( ) {
-        
+        //计算正确反应的反应时均值
     },
-
+    on_timeline_start: function ( ) {
+        rotation_rt_list = []; //重置反应时列表
+    },
     timeline_variables: resultList,
     repetitions: 8,
     timeline: [
@@ -679,12 +682,18 @@ let rotation_trials = {
 
                 data.is_trial = true;
                 data.trial_class = 'rotation';
+                data.rotation = rotation_value;
                 //赋予正确答案值
                 if (data.orientation === '-') {
                     data.correct = (data.response === 'f');
                 }
                 else {
                     data.correct = (data.response === 'j');
+                }
+
+                if (data.correct) { //将正确的反应时push进列表里
+                    rotation_rt_list.push(data.rt);
+                    console.log(rotation_rt_list);
                 }
             }
         },
