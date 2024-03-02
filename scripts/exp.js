@@ -1,5 +1,5 @@
 /*Adaptive rotation SNARC effect experiment: Experiment*/
-/*240229 - Unfinished*/
+/*240302*/
 
 //列表生成
 const originalList = [
@@ -189,7 +189,7 @@ let parity_training = {
             choices: 'NO_KEYS',
             trial_duration: 500,
             post_trial_gap: function () {
-                let random_interval = 400 + 200 * Math.random();
+                let random_interval = 400 + Math.floor(200 * Math.random());
                 return random_interval;
             }
         },
@@ -307,7 +307,7 @@ let parity_trials = {
             choices: 'NO_KEYS',
             trial_duration: 500,
             post_trial_gap: function () {
-                let random_interval = 400 + 200 * Math.random();
+                let random_interval = 400 + Math.floor(200 * Math.random());
                 return random_interval;
             }
         },
@@ -547,12 +547,12 @@ let rotation_training = {
             choices: 'NO_KEYS',
             trial_duration: 500,
             post_trial_gap: function () {
-                let random_interval = 400 + 200 * Math.random();
+                let random_interval = 400 + Math.floor(200 * Math.random());
                 return random_interval;
             }
         },
         {  //刺激
-            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + jsPsych.timelineVariable('rotation') + "deg)'>" + jsPsych.timelineVariable('content') + "</div>",
+            stimulus: () => "<div class='experiment-content-rotation' style='transform: rotate(" + jsPsych.timelineVariable('orientation') + rotation_value + "deg)'>" + jsPsych.timelineVariable('content') + "</div>",
             //怎么写得这么复杂的
             choices: ["f", "j"],
             //stimulus_duration: 150,
@@ -650,7 +650,13 @@ let rotation_trials = {
         rotation: rotation_value,
     },
     on_timeline_finish: function ( ) {
-        //计算正确反应的反应时均值
+        average_rt = rotation_rt_list.reduce((a, b) => a + b, 0) / rotation_rt_list.length; //计算正确反应的反应时均值
+        if ((average_rt - standard_rt) >= 5) {
+            rotation_value -= 1; // 先设置成1
+        }
+        if ((average_rt - standard_rt) <= -5) {
+            rotation_value += 1;
+        }
     },
     on_timeline_start: function ( ) {
         rotation_rt_list = []; //重置反应时列表
@@ -668,7 +674,7 @@ let rotation_trials = {
             choices: 'NO_KEYS',
             trial_duration: 500,
             post_trial_gap: function () {
-                let random_interval = 400 + 200 * Math.random();
+                let random_interval = 400 + Math.floor(200 * Math.random());
                 return random_interval;
             }
         },
@@ -683,6 +689,7 @@ let rotation_trials = {
                 data.is_trial = true;
                 data.trial_class = 'rotation';
                 data.rotation = rotation_value;
+
                 //赋予正确答案值
                 if (data.orientation === '-') {
                     data.correct = (data.response === 'f');
@@ -693,11 +700,10 @@ let rotation_trials = {
 
                 if (data.correct) { //将正确的反应时push进列表里
                     rotation_rt_list.push(data.rt);
-                    console.log(rotation_rt_list);
                 }
             }
         },
-        {  //休息试次
+        /*{  //休息试次
             timeline: [
                 {
                     stimulus: `请休息片刻，稍后实验将继续`,
@@ -717,7 +723,7 @@ let rotation_trials = {
                     return false
                 }
             },
-        }
+        }*/
     ],
     sample: {
         type: 'custom',
