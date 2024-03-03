@@ -47,13 +47,13 @@ let jsPsych = initJsPsych({
     on_finish: function () {
         jsPsych.data
             .get()
-            .addToAll({ subject_index: participant_index, gender: gender, age: age })
+            .addToAll({ subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-pre' })
             .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     },
     on_close: function () {
         jsPsych.data
             .get()
-            .addToAll({ subject_index: participant_index, gender: gender, age: age })
+            .addToAll({ subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-pre' })
             .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     }
 }); //初始化jsPsych
