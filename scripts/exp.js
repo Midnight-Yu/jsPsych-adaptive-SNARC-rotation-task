@@ -109,6 +109,10 @@ let instruction_fullscreen = {
     delay_after: 1000
 };
 
+let browser_check = {
+    type: jsPsychBrowserCheck
+};
+
 let instruction = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
@@ -872,7 +876,7 @@ let ending = {
 }
 
 jsPsych.run([
-    welcome, data_collect, instruction_fullscreen, 
+    welcome, data_collect, instruction_fullscreen, browser_check,
     instruction,
     instruction_parity, practice_instruction, parity_training, practice_feedback, parity_trials, 
     instruction_rotation, practice_instruction, rotation_training, practice_feedback, rotation_trials, 
