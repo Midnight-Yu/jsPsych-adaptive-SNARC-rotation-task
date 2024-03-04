@@ -96,6 +96,19 @@ let data_collect = {
     }
 };
 
+let instruction_fullscreen = {
+    type: jsPsychFullscreen,
+    fullscreen_mode: true,
+    css_classes: ['non-experiment'],
+    message: `
+    <p>感谢您的参与，即将进入实验</p>
+    <p>实验将以全屏形式运行，实验过程中不使用鼠标</p>
+    <p>准备好后点击按钮进入实验</p>
+    `,
+    button_label: '进入实验',
+    delay_after: 1000
+};
+
 let instruction = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
@@ -849,11 +862,17 @@ let ending = {
     <p>实验已结束</p>
     `,
     post_trial_gap: 500,
-    css_classes: "experiment-instruction"
+    css_classes: "experiment-instruction",
+    on_start: function ( ) {
+        jsPsych.data
+            .get()
+            .addToAll({ subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive'})
+            .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+    },
 }
 
 jsPsych.run([
-    welcome, data_collect, 
+    welcome, data_collect, instruction_fullscreen, 
     instruction,
     instruction_parity, practice_instruction, parity_training, practice_feedback, parity_trials, 
     instruction_rotation, practice_instruction, rotation_training, practice_feedback, rotation_trials, 
