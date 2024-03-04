@@ -112,7 +112,7 @@ let instruction_fullscreen = {
 
 let browser_check = {
     type: jsPsychBrowserCheck
-  };
+};
 
 let instruction = {
     type: jsPsychHtmlKeyboardResponse,
