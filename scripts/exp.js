@@ -39,22 +39,23 @@ let rotation_rt_list = [];
 let parity_practice_corr_count = 0; //练习试次检测正确率的变量
 let rotation_practice_corr_count = 0;
 
-let participant_index; //被试数据收集
+let participant_index;
 let gender;
 let age;
+let grade;
 
 let jsPsych = initJsPsych({
     on_finish: function () {
         jsPsych.data
             .get()
-            .addToAll({ subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive'})
-            .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive' })
+            .localSave('csv', participant_index.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     },
     on_close: function () {
         jsPsych.data
             .get()
-            .addToAll({ subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive' })
-            .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive' })
+            .localSave('csv', participant_index.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     }
 }); //初始化jsPsych
 
@@ -84,6 +85,7 @@ let data_collect = {
     html: `
     <p>您的编号：<input type="text" name="participant_index" style="color:black" placeholder="如不知道，请询问实验人员"></p>
     <p>您的性别：<input type="radio" name="gender" value = "1" >男<input type="radio" name="gender" value = "2" >女</p>
+    <p>您的年级：<input type="radio" name="grade" value = "2" >2<input type="radio" name="grade" value = "4" >4<input type="radio" name="grade" value = "6" >6</p>
     <p>您的年龄：<input type="text" name="age" style="color:black" placeholder="请输入阿拉伯数字，如23"></p>
     `,
     button_label: '提交',
@@ -92,6 +94,7 @@ let data_collect = {
 
         participant_index = data.response.participant_index;
         gender = data.response.gender;
+        grade = data.response.grade;
         age = data.response.age;
     }
 };
