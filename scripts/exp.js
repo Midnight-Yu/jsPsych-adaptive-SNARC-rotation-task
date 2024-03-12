@@ -672,10 +672,10 @@ let rotation_trials = {
     on_timeline_finish: function ( ) {
         average_rt = rotation_rt_list.reduce((a, b) => a + b, 0) / rotation_rt_list.length; //计算正确反应的反应时均值
         if ((average_rt - standard_rt) >= 5) {
-            rotation_value -= 1; // 先设置成1
+            rotation_value -= 0.5; 
         }
         if ((average_rt - standard_rt) <= -5) {
-            rotation_value += 1;
+            rotation_value += 0.5;
         }
     },
     on_timeline_start: function ( ) {
