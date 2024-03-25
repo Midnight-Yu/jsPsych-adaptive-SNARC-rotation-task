@@ -169,8 +169,8 @@ let instruction_parity = {
             <h2>第一部分</h2>
 
             <p>这个部分的规则如下<br><br>
-            当你看到奇数时，请按下<span style="color:orange"> F </span>键<br>
-            当你看到偶数时，请按下<span style="color:orange"> J </span>键</p>
+            当你看到单数时，请按下<span style="color:orange"> F </span>键<br>
+            当你看到双数时，请按下<span style="color:orange"> J </span>键</p>
 
             <p>例如，当你看到 3 时，请按下 F 键<br>
             例如，当你看到 6 时，请按下 J 键</p>
@@ -415,7 +415,7 @@ let parity_trials = {
                         success = true;
                     } else {
                         if (evenCount === 3) {
-                            // 偶数连续判断为真，生成失败，重新初始化
+                            // 双数连续判断为真，生成失败，重新初始化
                             new_t = [];
                             oddCount = 0;
                             evenCount = 0;
@@ -424,7 +424,7 @@ let parity_trials = {
                             even_pool = [...original_even_pool];
                             continue;
                         } else {
-                            // 随机取一个偶数，跳到判断
+                            // 随机取一个双数，跳到判断
                             currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
                             index = even_pool.indexOf(currentElement);
                             if (index > -1) {
@@ -434,7 +434,7 @@ let parity_trials = {
                     }
                 } else if (even_pool.length === 0) {
                     if (oddCount === 3) {
-                        // 奇数连续判断为真，生成失败，重新初始化
+                        // 单数连续判断为真，生成失败，重新初始化
                         new_t = [];
                         oddCount = 0;
                         evenCount = 0;
@@ -443,7 +443,7 @@ let parity_trials = {
                         even_pool = [...original_even_pool];
                         continue;
                     } else {
-                        // 随机取一个奇数，跳到判断
+                        // 随机取一个单数，跳到判断
                         currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
                         index = odd_pool.indexOf(currentElement);
                         if (index > -1) {
@@ -452,14 +452,14 @@ let parity_trials = {
                     }
                 } else {
                     if (oddCount === 3) {
-                        // 奇数连续判断为真，取偶数
+                        // 单数连续判断为真，取双数
                         currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
                         index = even_pool.indexOf(currentElement);
                         if (index > -1) {
                             even_pool.splice(index, 1);
                         }
                     } else if (evenCount === 3) {
-                        // 偶数连续判断为真，取奇数
+                        // 双数连续判断为真，取单数
                         currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
                         index = odd_pool.indexOf(currentElement);
                         if (index > -1) {
@@ -478,11 +478,11 @@ let parity_trials = {
 
                 // 判断语句
                 if (currentElement % 2 === 0) {
-                    // 上面取的是偶数，偶数++，奇数=0
+                    // 上面取的是双数，双数++，单数=0
                     evenCount++;
                     oddCount = 0;
                 } else {
-                    // 上面取的是奇数，奇数++，偶数=0
+                    // 上面取的是单数，单数++，双数=0
                     oddCount++;
                     evenCount = 0;
                 }
@@ -780,7 +780,7 @@ let rotation_trials = {
                         success = true;
                     } else {
                         if (evenCount === 3) {
-                            // 偶数连续判断为真，生成失败，重新初始化
+                            // 双数连续判断为真，生成失败，重新初始化
                             new_t = [];
                             oddCount = 0;
                             evenCount = 0;
@@ -789,7 +789,7 @@ let rotation_trials = {
                             even_pool = [...original_even_pool];
                             continue;
                         } else {
-                            // 随机取一个偶数，跳到判断
+                            // 随机取一个双数，跳到判断
                             currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
                             index = even_pool.indexOf(currentElement);
                             if (index > -1) {
@@ -799,7 +799,7 @@ let rotation_trials = {
                     }
                 } else if (even_pool.length === 0) {
                     if (oddCount === 3) {
-                        // 奇数连续判断为真，生成失败，重新初始化
+                        // 单数连续判断为真，生成失败，重新初始化
                         new_t = [];
                         oddCount = 0;
                         evenCount = 0;
@@ -808,7 +808,7 @@ let rotation_trials = {
                         even_pool = [...original_even_pool];
                         continue;
                     } else {
-                        // 随机取一个奇数，跳到判断
+                        // 随机取一个单数，跳到判断
                         currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
                         index = odd_pool.indexOf(currentElement);
                         if (index > -1) {
@@ -817,14 +817,14 @@ let rotation_trials = {
                     }
                 } else {
                     if (oddCount === 3) {
-                        // 奇数连续判断为真，取偶数
+                        // 单数连续判断为真，取双数
                         currentElement = even_pool[Math.floor(Math.random() * even_pool.length)];
                         index = even_pool.indexOf(currentElement);
                         if (index > -1) {
                             even_pool.splice(index, 1);
                         }
                     } else if (evenCount === 3) {
-                        // 偶数连续判断为真，取奇数
+                        // 双数连续判断为真，取单数
                         currentElement = odd_pool[Math.floor(Math.random() * odd_pool.length)];
                         index = odd_pool.indexOf(currentElement);
                         if (index > -1) {
@@ -843,11 +843,11 @@ let rotation_trials = {
 
                 // 判断语句
                 if (currentElement % 2 === 0) {
-                    // 上面取的是偶数，偶数++，奇数=0
+                    // 上面取的是双数，双数++，单数=0
                     evenCount++;
                     oddCount = 0;
                 } else {
-                    // 上面取的是奇数，奇数++，偶数=0
+                    // 上面取的是单数，单数++，双数=0
                     oddCount++;
                     evenCount = 0;
                 }
