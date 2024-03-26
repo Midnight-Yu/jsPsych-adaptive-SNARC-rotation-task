@@ -49,20 +49,20 @@ let jsPsych = initJsPsych({
         jsPsych.data
             .get()
             .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive' })
-            .localSave('csv', participant_index.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .localSave('csv', participant_index.concat("-").concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     },
     on_close: function () {
         jsPsych.data
             .get()
             .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive' })
-            .localSave('csv', participant_index.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .localSave('csv', participant_index.concat("-").concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     }
 }); //初始化jsPsych
 
-// 注册一个listener，用于实验强制退出
+// 注册一个listener，用于测验强制退出
 function endExperiment(e) {
     if (e.key === 'Escape') {
-        jsPsych.endExperiment('实验已终止');
+        jsPsych.endExperiment('测验已终止');
         document.removeEventListener("keydown", endExperiment);
     }
 };
@@ -71,11 +71,11 @@ let welcome = {
     type: jsPsychHtmlButtonResponse,
     css_classes: ['non-experiment'],
     stimulus: `
-    <p>欢迎参加本次实验！</p>
-    <p>在实验开始前，我们会收集一些用于分析的必要信息</p>
+    <p>欢迎参加本次测验！</p>
+    <p>在测验开始前，我们会收集一些用于分析的必要信息</p>
     <p>点击下方按钮开始</p>
     `,
-    choices: ['开始实验']
+    choices: ['开始测验']
 };
 
 // 数据收集
@@ -83,7 +83,7 @@ let data_collect = {
     type: jsPsychSurveyHtmlForm,
     css_classes: ['non-experiment'],
     html: `
-    <p>您的编号：<input type="text" name="participant_index" style="color:black" placeholder="如不知道，请询问实验人员"></p>
+    <p>您的编号：<input type="text" name="participant_index" style="color:black" placeholder="如不知道，请询问测验人员"></p>
     <p>您的性别：<input type="radio" name="gender" value = "1" >男<input type="radio" name="gender" value = "2" >女</p>
     <p>您的年级：<input type="radio" name="grade" value = "2" >2<input type="radio" name="grade" value = "4" >4<input type="radio" name="grade" value = "6" >6</p>
     <p>您的年龄：<input type="text" name="age" style="color:black" placeholder="请输入阿拉伯数字，如23"></p>
@@ -104,11 +104,11 @@ let instruction_fullscreen = {
     fullscreen_mode: true,
     css_classes: ['non-experiment'],
     message: `
-    <p>感谢您的参与，即将进入实验</p>
-    <p>实验将以全屏形式运行，实验过程中不使用鼠标</p>
-    <p>准备好后点击按钮进入实验</p>
+    <p>感谢您的参与，即将进入测验</p>
+    <p>测验将以全屏形式运行，测验过程中不使用鼠标</p>
+    <p>准备好后点击按钮进入测验</p>
     `,
-    button_label: '进入实验',
+    button_label: '进入测验',
     delay_after: 1000
 };
 
@@ -119,11 +119,11 @@ let browser_check = {
 let instruction = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
-    <p>欢迎加入实验！</p>
-    <p>本实验分为两个阶段，两个阶段有不同的任务</p>
-    <p>每个阶段开始前，都有练习流程帮助你熟悉实验</p>
+    <p>欢迎加入测验！</p>
+    <p>本测验分为两个阶段，两个阶段有不同的任务</p>
+    <p>每个阶段开始前，都有练习流程帮助你熟悉测验</p>
     <p></p>
-    <p>准备好后，按空格键进入实验</p>
+    <p>准备好后，按空格键进入测验</p>
     `,
     post_trial_gap: 1000,
     css_classes: "experiment-instruction",
@@ -139,7 +139,7 @@ let practice_instruction = {
     stimulus: `
     <div class='experiment-instruction'>
     <p>即将进入练习阶段</p>
-    <p>练习正确率达到 70% 后，可进入正式实验</p>
+    <p>练习正确率达到 70% 后，可进入正式测验</p>
     <p>按空格键开始</p>
     </div>
     `,
@@ -152,9 +152,9 @@ let practice_feedback = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `<div class='experiment-instruction'> 
     <p>练习阶段已结束，你的正确率已达到要求</p>
-    <p>接下来将进入正式实验</p>
+    <p>接下来将进入正式测验</p>
     <p>&nbsp;</p>
-    <p>按空格键进入正式实验</p>
+    <p>按空格键进入正式测验</p>
     </div>
     `,
     choices: [' ']
@@ -353,12 +353,12 @@ let parity_trials = {
             css_classes: "experiment-instruction",
             timeline: [
                 {
-                    stimulus: `请休息片刻，稍后实验将继续`,
+                    stimulus: `请休息片刻，稍后测验将继续`,
                     trial_duration: 30000,
                     choices: 'NO_KEYS'
                 },
                 {
-                    stimulus: `休息已终止，按空格可继续实验`,
+                    stimulus: `休息已终止，按空格可继续测验`,
                     choices: ' '
                 },
             ],
@@ -726,12 +726,12 @@ let rotation_trials = {
         /*{  //休息试次
             timeline: [
                 {
-                    stimulus: `请休息片刻，稍后实验将继续`,
+                    stimulus: `请休息片刻，稍后测验将继续`,
                     trial_duration: 30000,
                     choices: 'NO_KEYS'
                 },
                 {
-                    stimulus: `休息已终止，按空格可继续实验`,
+                    stimulus: `休息已终止，按空格可继续测验`,
                     choices: ' '
                 },
             ],
@@ -866,15 +866,15 @@ let rotation_trials = {
 let ending = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
-    <p>实验已结束</p>
+    <p>测验已结束</p>
     `,
     post_trial_gap: 500,
     css_classes: "experiment-instruction",
     on_start: function ( ) {
         jsPsych.data
             .get()
-            .addToAll({ subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive'})
-            .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-adaptive' })
+            .localSave('csv', participant_index.concat("-").concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     },
 }
 
