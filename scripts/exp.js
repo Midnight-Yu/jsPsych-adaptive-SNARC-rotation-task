@@ -49,13 +49,13 @@ let jsPsych = initJsPsych({
         jsPsych.data
             .get()
             .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-pre' })
-            .localSave('csv', participant_index.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .localSave('csv', participant_index.concat("-").concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     },
     on_close: function () {
         jsPsych.data
             .get()
             .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-pre' })
-            .localSave('csv', participant_index.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .localSave('csv', participant_index.concat("-").concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     }
 }); //初始化jsPsych
 
@@ -855,8 +855,8 @@ let ending = {
     on_start: function () {
         jsPsych.data
             .get()
-            .addToAll({ subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-pre' })
-            .localSave('csv', 'data-'.concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
+            .addToAll({ grade: grade, subject_index: participant_index, gender: gender, age: age, experiment_name: 'SNARC-rotation-pre' })
+            .localSave('csv', participant_index.concat("-").concat(Date(0).toLocaleString('zh-CN')).concat('.csv'))
     },
 }
 
